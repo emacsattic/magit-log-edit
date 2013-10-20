@@ -24,8 +24,62 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'log-edit)
 (require 'magit)
+
+;;; Hook into current `magit.el'
+;;;; Restore traditional commit
+
+;; Use the old "commit mode".
+(define-key magit-mode-map (kbd "c") 'magit-log-edit)
+
+;; That doesn't exist anymore in `magit.el'.
+(defun magit-run-git-async-with-input (input &rest args)
+  (magit-run-git* args nil nil nil t input))
+
+;;;; Restore traditional tag
+
+;; That doesn't exist anymore in `magit.el'.
+(magit-define-command annotated-tag (name rev)
+  "Start composing an annotated tag with the given NAME.
+\('git tag -a NAME REV')."
+  (interactive
+   (list
+    (magit-read-tag "Tag name: ")
+    (magit-read-rev "Place tag on: " (or (magit-default-rev) "HEAD"))))
+  (magit-log-edit-set-field 'tag-name name)
+  (magit-log-edit-set-field 'tag-rev rev)
+  (magit-log-edit-set-field 'tag-options magit-custom-options)
+  (magit-pop-to-log-edit "tag"))
+
+;; `magit-tag' from `magit.el' now also supports annotated tags.
+;; Bring back the old implementation under a new name.
+(magit-define-command lightweight-tag (name rev)
+  "Create a new lightweight tag with the given NAME at REV.
+\('git tag NAME REV')."
+  (interactive
+   (list
+    (magit-read-tag "Tag name: ")
+    (magit-read-rev "Place tag on: " (or (magit-default-rev) "HEAD"))))
+  (apply #'magit-run-git "tag" (append magit-custom-options (list name rev))))
+
+;; The current "tagging popup" now expects `magit-tag' to understand
+;; `--annotate'.  Create a new popup that doesn't and instead provides
+;; two destinct tag commands.
+(cl-pushnew '(tagging-old
+              (man-page "git-tag")
+              (actions
+               ("t" "Lightweight" magit-lightweight-tag)
+               ("a" "Annotated" magit-annotated-tag)
+               ("k" "Delete" magit-delete-tag))
+              (switches
+               ("-f" "Force" "-f")))
+            magit-key-mode-groups)
+(magit-key-mode-generate 'tagging-old)
+
+;; Use the old "tagging popup".
+(define-key magit-mode-map (kbd "t") 'magit-key-mode-popup-tagging-old)
 
 ;;; Options
 
@@ -47,6 +101,21 @@ will cause all changes to be staged, after a confirmation."
                  (const :tag "Always" t)
                  (const :tag "Ask" ask)
                  (const :tag "Ask to stage everything" ask-stage)))
+
+(defcustom magit-commit-signoff nil
+  "Add the \"Signed-off-by:\" line when committing."
+  :group 'magit
+  :type 'boolean)
+
+(defcustom magit-commit-gpgsign nil
+  "Use GPG to sign commits."
+  :group 'magit
+  :type 'boolean)
+
+(defcustom magit-commit-no-verify nil
+  "Bypass the pre-commit and commit-msg hooks when committing."
+  :group 'magit
+  :type 'boolean)
 
 ;;; Keymaps
 
@@ -313,8 +382,7 @@ continue it.
 \(i.e., whether eventual commit does 'git commit --amend')"
   (interactive)
   (when (eq (magit-log-edit-toggle-field 'amend t) 'first)
-    (magit-log-edit-append
-     (magit-trim-line (magit-format-commit "HEAD" "%s%n%n%b")))))
+    (magit-log-edit-append (magit-format-commit "HEAD" "%s%n%n%b"))))
 
 (defun magit-log-edit-toggle-signoff ()
   "Toggle whether this commit will include a signoff.
