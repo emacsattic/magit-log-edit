@@ -1,9 +1,15 @@
 ;;; magit-log-edit.el --- major mode for editing Git commit messages
 
-;; Copyright (C) 2008  Marius Vollmer
-;; Copyright (C) 2010  Phil Jackson
+;; Copyright (C) 2008-2013  The Magit Project Developers.
+;;
+;; For a full list of contributors, see the AUTHORS.md file
+;; at the top-level directory of this distribution and at
+;; https://raw.github.com/magit/magit/master/AUTHORS.md
 
 ;; Author: Marius Vollmer <marius.vollmer@nokia.com>
+;; Keywords: vc tools
+;; Package: magit-log-edit
+;; Package-Requires: ((cl-lib "0.3") (magit "1.3.0"))
 
 ;; Magit is free software; you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by
@@ -21,6 +27,9 @@
 ;;; Commentary:
 
 ;; A major mode for editing Git commit messages.
+
+;; This is the mode that was used before Magit switched to using the
+;; external `git-commit-mode'.  That still has some problems, though.
 
 ;;; Code:
 
