@@ -335,7 +335,7 @@ continue it.
       (insert "(Empty description)\n"))
     (let ((env process-environment)
           (commit-buf (current-buffer)))
-      (with-current-buffer (magit-find-status-buffer default-directory)
+      (with-current-buffer (magit-find-buffer 'magit-status-mode)
         (let ((process-environment env))
           (if tag-name
               (apply #'magit-run-git-with-input commit-buf "tag"
