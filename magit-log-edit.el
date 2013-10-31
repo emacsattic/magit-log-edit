@@ -37,13 +37,7 @@
 (require 'log-edit)
 (require 'magit)
 
-;;; Disable `git-commit-mode.el'
-
-(when (fboundp 'git-commit-auto-mode-disable)
-  (git-commit-auto-mode-disable))
-
 ;;; Hook into current `magit.el'
-
 ;;;; Restore traditional commit
 
 ;; Use the old "commit mode".
