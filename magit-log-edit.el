@@ -50,7 +50,7 @@
 ;;;; Restore traditional tag
 
 ;; That doesn't exist anymore in `magit.el'.
-(magit-define-command annotated-tag (name rev)
+(defun magit-annotated-tag (name rev)
   "Start composing an annotated tag with the given NAME.
 \('git tag -a NAME REV')."
   (interactive
@@ -64,7 +64,7 @@
 
 ;; `magit-tag' from `magit.el' now also supports annotated tags.
 ;; Bring back the old implementation under a new name.
-(magit-define-command lightweight-tag (name rev)
+(defun magit-lightweight-tag (name rev)
   "Create a new lightweight tag with the given NAME at REV.
 \('git tag NAME REV')."
   (interactive
