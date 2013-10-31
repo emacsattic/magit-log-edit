@@ -53,10 +53,10 @@
 (defun magit-annotated-tag (name rev)
   "Start composing an annotated tag with the given NAME.
 \('git tag -a NAME REV')."
-  (interactive
-   (list
-    (magit-read-tag "Tag name: ")
-    (magit-read-rev "Place tag on: " (or (magit-default-rev) "HEAD"))))
+  (interactive (list (magit-read-tag "Tag name")
+                     (magit-read-rev "Place tag on"
+                                     (or (magit-guess-branch) "HEAD"))
+                     current-prefix-arg))
   (magit-log-edit-set-field 'tag-name name)
   (magit-log-edit-set-field 'tag-rev rev)
   (magit-log-edit-set-field 'tag-options magit-custom-options)
@@ -67,10 +67,10 @@
 (defun magit-lightweight-tag (name rev)
   "Create a new lightweight tag with the given NAME at REV.
 \('git tag NAME REV')."
-  (interactive
-   (list
-    (magit-read-tag "Tag name: ")
-    (magit-read-rev "Place tag on: " (or (magit-default-rev) "HEAD"))))
+  (interactive (list (magit-read-tag "Tag name")
+                     (magit-read-rev "Place tag on"
+                                     (or (magit-guess-branch) "HEAD"))
+                     current-prefix-arg))
   (apply #'magit-run-git "tag" (append magit-custom-options (list name rev))))
 
 ;; The current "tagging popup" now expects `magit-tag' to understand
