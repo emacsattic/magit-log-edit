@@ -47,6 +47,13 @@
 (defun magit-run-git-async-with-input (input &rest args)
   (magit-run-git* args nil nil nil t input))
 
+;; That doesn't exist anymore in `magit.el'.
+(defun magit-format-commit (commit format)
+  (magit-git-string "log" "-1"
+                    (magit-diff-abbrev-arg)
+                    (concat "--pretty=format:" format)
+                    commit))
+
 ;;;; Restore traditional tag
 
 ;; That doesn't exist anymore in `magit.el'.
