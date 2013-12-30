@@ -60,10 +60,6 @@
 (define-key magit-mode-map (kbd "c") 'magit-log-edit)
 
 ;; That doesn't exist anymore in `magit.el'.
-(defun magit-run-git-async-with-input (input &rest args)
-  (magit-run-git* args nil nil nil t input))
-
-;; That doesn't exist anymore in `magit.el'.
 (defun magit-format-commit (commit format)
   (magit-git-string "log" "-1"
                     (magit-diff-abbrev-arg)
@@ -365,7 +361,7 @@ continue it.
           (if tag-name
               (apply #'magit-run-git-with-input commit-buf "tag"
                      `(,@tag-options ,tag-name "-a" "-F" "-" ,tag-rev))
-            (apply #'magit-run-git-async-with-input commit-buf "commit"
+            (apply #'magit-run-git-with-input commit-buf "commit"
                    `(,@magit-custom-options "-F" "-"
                      ,@(and commit-all (not allow-empty) (list "--all"))
                      ,@(and amend       (list "--amend"))
