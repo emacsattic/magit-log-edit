@@ -34,8 +34,8 @@
 ;; This is the mode that was used before Magit switched to using the
 ;; external `git-commit-mode'.  That still has some problems, though:
 
-;; - In-progress commit blocks certain actions.
-;;   https://github.com/magit/magit/issues/827
+;; Well, actually only one is left:
+
 ;; - Doesn't work well with tramp.
 ;;   https://github.com/magit/magit/issues/801
 
