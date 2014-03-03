@@ -61,10 +61,7 @@
 
 ;; That doesn't exist anymore in `magit.el'.
 (defun magit-format-commit (commit format)
-  (magit-git-string "log" "-1"
-                    (magit-diff-abbrev-arg)
-                    (concat "--pretty=format:" format)
-                    commit))
+  (magit-git-string "log" "-1" (concat "--pretty=format:" format) commit))
 
 ;;;; Restore traditional tag
 
@@ -246,7 +243,7 @@ continue it.
   ;; suggest to continue the rebase. Git will rebuke you and exit with
   ;; error code, so suggest it only if theres absolutely nothing else
   ;; to do and rebase is ongoing.
-  (if (and (magit-everything-clean-p)
+  (if (and (not (magit-anything-modified-p))
            (magit-rebase-info)
            (y-or-n-p "Rebase in progress.  Continue it? "))
       (magit-run-git-async "rebase" "--continue")
@@ -257,7 +254,7 @@ continue it.
     (let ((amend-p (= (prefix-numeric-value arg) 4))
           (empty-p (= (prefix-numeric-value arg) 16)))
       (when (and magit-commit-all-when-nothing-staged
-                 (not (magit-everything-clean-p))
+                 (magit-anything-unstaged-p)
                  (not (magit-anything-staged-p)))
         (cond ((eq magit-commit-all-when-nothing-staged 'ask-stage)
                (when (y-or-n-p "Nothing staged.  Stage everything now? ")
@@ -338,7 +335,7 @@ continue it.
                 tag-name
                 (file-exists-p (magit-git-dir "MERGE_HEAD"))
                 (and commit-all
-                     (not (magit-everything-clean-p))))
+                     (magit-anything-unstaged-p)))
       (error (concat "Refusing to create empty commit. "
                      "Maybe you want to amend (%s) or allow-empty (%s)?")
              (key-description (car (where-is-internal
