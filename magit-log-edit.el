@@ -71,8 +71,7 @@
 \('git tag -a NAME REV')."
   (interactive (list (magit-read-tag "Tag name")
                      (magit-read-rev "Place tag on"
-                                     (or (magit-guess-branch) "HEAD"))
-                     current-prefix-arg))
+                                     (or (magit-guess-branch) "HEAD"))))
   (magit-log-edit-set-field 'tag-name name)
   (magit-log-edit-set-field 'tag-rev rev)
   (magit-log-edit-set-field 'tag-options magit-custom-options)
