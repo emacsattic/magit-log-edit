@@ -84,8 +84,7 @@
 \('git tag NAME REV')."
   (interactive (list (magit-read-tag "Tag name")
                      (magit-read-rev "Place tag on"
-                                     (or (magit-guess-branch) "HEAD"))
-                     current-prefix-arg))
+                                     (or (magit-guess-branch) "HEAD")))
   (apply #'magit-run-git "tag" (append magit-custom-options (list name rev))))
 
 ;; The current "tagging popup" now expects `magit-tag' to understand
